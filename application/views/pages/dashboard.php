@@ -756,7 +756,7 @@ body {
    PANEL
 ═══════════════════════════════════════════ */
 .panel {
-  max-height:675px;
+  max-height:600px;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r);
@@ -770,7 +770,7 @@ body {
 }
 .sec-title {
   font-size:10px;letter-spacing:2.5px;text-transform:uppercase;
-  color:var(--gold);font-weight:600;margin-bottom:16px;
+  color:var(--gold);font-weight:600;margin-bottom:10px;
   display:flex;align-items:center;gap:10px;
 }
 .sec-title::after{content:'';flex:1;height:1px;background:var(--line);}
@@ -884,6 +884,71 @@ body {
 #proc-table tbody tr th{
   text-align:center;
 }
+
+
+/* MERCH FILTER CHANGES */
+
+#merch_filter_btn{
+  flex: 1 1 auto;
+  display:flex;
+  justify-content:center;
+  padding:0;
+  gap:10px;
+}
+
+#merch_voice_btn:active{
+  transform:scale(0.95);
+  opacity:0.7;
+}
+
+#merchfbtn, #merchfreset{
+  padding:4px 10px;
+  border:1px solid var(--line);
+  border-radius:5px;
+  color:white;
+  font-family:var(--font-b);
+  font-size:12px;
+  background:var(--teal);
+  transition:all .25s;
+  cursor:pointer;
+}
+
+#merchfbtn:active, #merchfreset:active{
+  transform:scale(0.95);
+  opacity:0.8;
+}
+
+#merchfreset{
+  background:grey;
+}
+
+#merchfilt_box{
+  flex: 1 1 auto;
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+}
+
+#merchfinput{
+  max-width:140px;
+  border-radius:8px;
+  border:1px solid lightgrey;
+  padding:3px 5px;
+  outline:none;
+  transition: all .25s;
+  font-size:12px;
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1548,7 +1613,8 @@ body {
 
           <!-- Merch -->
           <div class="panel" style="animation:fadeUp .6s .25s ease both">
-            <div class="sec-title">Merch Groups</div>
+            <div class="sec-title">Merch Groups <span id="merchfilt_box"><input id="merchfinput" type="text" ><img style="transition:all .25s;" id="merch_voice_btn" src="<?php echo base_url()?>assets/images/mic.png" width="15" height="15" alt=""></span></div>
+            <div id='merch_filter_btn' class="merch_filter_btn"><button id="merchfbtn" type='button'>Filter</button><button id='merchfreset' type='button'>Reset</button></div>
             <div id="merchWrap"></div>  
           </div>
 
@@ -1559,7 +1625,7 @@ body {
             <div class="bar-row" id="chartBars"></div>
           </div>
 
-          <!-- Heatmap -->
+          <!-- Heatmap -->  
           <!-- <div class="panel" style="animation:fadeUp .6s .45s ease both">
             <div class="sec-title">Delay Stage Heatmap</div>
             <div id="heatWrap"></div>
@@ -1598,46 +1664,44 @@ let MERCH = [];
 let TNA = [];
 // let TNA = ["REQUIRMENT", "PRE COSTING", "TRIMS PURCHASE", "YARN PURCHASE", "DYEING SEND", "DYEING RECIEVED", "PP SAMPLE", "PRINTING SENT", "PRINTING RECIEVED"];
 
-function getOrders(seas, buy, comp){
+function getOrders(seas, buy, comp, merch){
   
-console.log(seas, buy, comp)
+  console.log(seas, buy, comp, merch);
 
-ORDERS = [];
-MERCH = [];
-TNA = [];
+  ORDERS = [];
+  MERCH = [];
+  TNA = [];
 
+  ORDERS = orders_json.filter(ol => 
+  (seas.includes('all') || seas.includes(ol.SEASON)) &&
+   (buy.includes('all') || buy.includes(ol.BUYERNAME.trim().toLowerCase())) && 
+   (comp.includes('all') || comp.includes(ol.COMPANYID.trim().toLowerCase()))&&
+   (merch.includes('all')|| merch.includes(ol.MERCH))
+  )
 
+  const uniqmerch = [...new Set(ORDERS.map(ol => ol.MERCH))]
 
+  // console.log(uniqmerch);
 
-ORDERS = orders_json.filter(ol => 
-(seas.includes('all') || seas.includes(ol.SEASON)) &&
- (buy.includes('all') || buy.includes(ol.BUYERNAME.trim().toLowerCase())) && 
- (comp.includes('all') || comp.includes(ol.COMPANYID.trim().toLowerCase()))
-)
-
-const uniqmerch = [...new Set(ORDERS.map(ol => ol.MERCH))]
-
-console.log(uniqmerch);
-
-MERCH = uniqmerch.map(um => ({
-  name : um?um:'No Name',
-  initials : um?get_initials(um):null,
-  color : '#3b9eff',
-  orders : ORDERS.filter(ol => ol.MERCH === um).length,
-  delayed : ORDERS.filter(ol => ol.MERCH === um && ol.STATUS ==='delayed').length
-}));
+  MERCH = uniqmerch.map(um => ({
+    name : um?um:'No Name',
+    initials : um?get_initials(um):null,
+    color : '#3b9eff',
+    orders : ORDERS.filter(ol => ol.MERCH === um).length,
+    delayed : ORDERS.filter(ol => ol.MERCH === um && ol.STATUS ==='delayed').length
+  }));
 
 
-console.log(ORDERS);
-console.log(MERCH);
+  console.log(ORDERS);
+  console.log(MERCH);
 
 
-/* ── INIT ── */
-initKPIs();
-renderOrders();
-renderMerch();
-renderChart();
-// renderHeat();
+  /* ── INIT ── */
+  initKPIs();
+  renderOrders();
+  renderMerch();
+  renderChart();
+  // renderHeat();
 
 }
 
@@ -1896,18 +1960,20 @@ function closeDelay(){ document.getElementById('delayPanel').classList.remove('s
 /* ── Merch ── */
 function renderMerch(){
   const maxO=Math.max(...MERCH.map(m=>m.orders));
-  document.getElementById('merchWrap').innerHTML=MERCH.map((m,i)=>`
-    <div class="merch-item" style="animation-delay:${i*.07}s" onclick="filterByMerch('${m.name}')">
-      <div class="m-av" style="background:${m.color}18;color:${m.color};border:1px solid ${m.color}33;">${m.initials}</div>
-      <div class="m-body">
-        <div class="m-name">${m.name}</div>
-        <div class="m-meta">${m.orders} orders · <span class="m-delayed">${m.delayed} delayed</span></div>
-      </div>
-      <div class="m-right">
-        <div class="m-bar-bg"><div class="m-bar-fg" style="width:0;background:${m.color}" data-w="${Math.round(m.orders/maxO*100)}"></div></div>
-        <div class="m-pct">${m.delayed>0?Math.round(m.delayed/m.orders*100)+'% delay':'clean'}</div>
-      </div>
-    </div>`).join('');
+  document.getElementById('merchWrap').innerHTML=MERCH.map((m,i)=>{
+    const delperc = Math.round(m.delayed/m.orders*100);
+   return `<div class="merch-item" style="animation-delay:${i*.07}s" ">
+   <div id='mfil_check' style='color:green; display:none;'>✓</div>
+    <div class="m-av" style="background:${m.color}18;color:${m.color};border:1px solid ${m.color}33;">${m.initials}</div>
+    <div class="m-body">
+    <div class="m-name">${m.name}</div>
+    <div class="m-meta">${m.orders} orders · <span class="m-delayed">${m.delayed} delayed</span></div>
+    </div>
+    <div class="m-right">
+    <div class="m-bar-bg"><div class="m-bar-fg" style="width:0;background:${ delperc > 50 ? m.color : delperc < 50 ? 'orange' : delperc < 30 ? 'red' : ''}" data-w="${delperc}"></div></div>
+    <div class="m-pct">${m.delayed>0?delperc+'% delay':'clean'}</div>
+    </div>
+    </div>`}).join('');
   setTimeout(()=>{
     document.querySelectorAll('.m-bar-fg').forEach(el=>{el.style.width=el.dataset.w+'%';});
   },600);
@@ -2051,6 +2117,12 @@ renderChart();
 
 
 // FILTER SEARCH BOX PROCESS
+
+let svalues = [];
+let bvalues = [];
+let cvalues = [];
+// getOrders(svalues, bvalues, cvalues, ['all']);
+
 // FOR SEASON
 let seasfil = document.getElementById('seasonbtn');
 let seasopt = document.getElementById('season-opt');
@@ -2081,9 +2153,9 @@ seas_clear.onclick = ()=>{
 
 // FILTER CHECKED
 seas_apply.onclick = ()=>{
-  let svalues = [];
-  let bvalues = [];
-  let cvalues = [];
+   svalues = [];
+   bvalues = [];
+   cvalues = [];
 
   let seasChecked = document.querySelectorAll('input[name="seasons[]"]:checked');  
   seasChecked.forEach(cb => {
@@ -2100,7 +2172,7 @@ seas_apply.onclick = ()=>{
     cvalues.push(cb.value);
   });
 
-  let orders = getOrders(svalues, bvalues, cvalues);
+  let orders = getOrders(svalues, bvalues, cvalues, ['all']);
   seasopt.classList.remove('show');
 }
 
@@ -2165,9 +2237,9 @@ buy_apply.onclick = ()=>{
 
   console.log('clicked');
 
-  let svalues = [];
-  let bvalues = [];
-  let cvalues = [];
+   svalues = [];
+   bvalues = [];
+   cvalues = [];
 
   let seasChecked = document.querySelectorAll('input[name="seasons[]"]:checked');  
   seasChecked.forEach(cb => {
@@ -2184,7 +2256,7 @@ buy_apply.onclick = ()=>{
     cvalues.push(cb.value.trim().toLowerCase());
   });
 
-  let orders = getOrders(svalues, bvalues, cvalues);
+  let orders = getOrders(svalues, bvalues, cvalues, ['all']);
   buyopt.classList.remove('show');
 
   // console.log(orders);
@@ -2248,9 +2320,9 @@ comp_apply.onclick = ()=>{
 
 console.log('clicked');
 
-let svalues = [];
-let bvalues = [];
-let cvalues = [];
+ svalues = [];
+ bvalues = [];
+ cvalues = [];
 
 let seasChecked = document.querySelectorAll('input[name="seasons[]"]:checked');  
 seasChecked.forEach(cb => {
@@ -2267,7 +2339,7 @@ compChecked.forEach(cb => {
   cvalues.push(cb.value.trim().toLowerCase());
 });
 
-let orders = getOrders(svalues, bvalues, cvalues);
+let orders = getOrders(svalues, bvalues, cvalues, ['all']);
 compopt.classList.remove('show');
 
 // console.log(orders);
@@ -2300,8 +2372,174 @@ comp_searchbox.addEventListener('input',()=>{
 });
 
 
+// MERCH FILTER PROCESS
+
+let merch_names = [];
+
+let merchfinput = document.getElementById('merchfinput');
+let merch_voice_btn = document.getElementById('merch_voice_btn');
+let merchfbtn = document.getElementById('merchfbtn');
+
+let timeout4;
+merchfinput.oninput = ()=>{
+
+  merch_names = [];
+
+  let merchWrap = document.getElementById('merchWrap');
+  let merchWrap_itms = merchWrap.querySelectorAll('.merch-item');
+
+  clearTimeout(timeout4);
+
+  timeout4 = setTimeout(() => {
+
+    const query = merchfinput.value.trim().toLowerCase().replace(' ','');
+
+    merchWrap_itms.forEach(itm => {
+      const txt = itm?itm.querySelector('.m-body .m-name').textContent.trim().toLowerCase().replace(' ','') : '';
+      if(txt.includes(query)){
+        itm.style.display='flex';
+      }else{
+        itm.style.display='none';
+      }
+    });
+
+  }, 100);
+
+}
 
 
+merchfbtn.onclick = ()=>{
+
+  if(MERCH.length===0) return;
+
+  let merchWrap_itms = merchWrap.querySelectorAll('.merch-item');
+
+  console.log(merch_names);
+
+  merchWrap_itms.forEach(itm => {
+    let disp = window.getComputedStyle(itm).display;
+
+    if(disp != 'none'){
+      merch_names.push(itm.querySelector('.m-body .m-name').textContent);
+    }
+  });
+
+  if(merch_names.length > 0){
+      getOrders(svalues, bvalues, cvalues, merch_names);
+    }
+
+}
+
+// FOR FILTER RESET
+merchfreset.onclick = ()=>{
+
+  merchfinput.value='';
+
+  if(MERCH.length === 0) return;
+
+  console.log('MERCH FILTER RESETED');
+  getOrders(svalues, bvalues, cvalues, ['all']);
+
+  
+}
+
+
+// MERCH VOICE FILTERING
+
+let is_recognizing = false;
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+
+recognition.continuous  = false;
+recognition.lang = 'ta-IN';
+recognition.interimResults = false;
+
+merch_voice_btn.onclick = ()=>{
+  console.log('recognition clicked'); 
+
+
+  if(merchfinput.value){
+    getOrders(svalues, bvalues, cvalues, ['all']);
+    merchfinput.value = '';
+    merchfinput.dispatchEvent(new Event('input'));
+  }
+
+
+  
+
+  
+
+  if(!is_recognizing && MERCH.length > 0){
+    recognition.start();
+  }else{
+    recognition.abort();
+  }
+
+}
+
+
+// RECOGNIZING EVENTS
+recognition .onstart = ()=>{
+  console.log('recognizing start');
+  merch_voice_btn.src='assets/images/recording.png';
+  merch_voice_btn.width='20';
+  merch_voice_btn.height='20';
+  is_recognizing = true;
+}
+
+
+recognition.onresult = async (res)=>{
+
+  console.log('Voice Gathering..');
+
+  let final_res = ''; 
+
+  const last = res.resultIndex;
+  if(res.results[last].isFinal){
+
+      final_res = res.results[last][0].transcript;
+      merchfinput.value = await translateTamil(final_res);
+      // TRIGGER INPUT MANUALLY
+      merchfinput.dispatchEvent(new Event('input')); 
+
+      console.log(final_res); 
+      setTimeout(() => {
+        merchfbtn.click();
+      }, 200);
+  }
+
+}
+
+recognition.onend = ()=>{
+        console.log('Recognition stopped');
+        recognition.abort();
+        is_recognizing = false;
+        merch_voice_btn.width='15';
+        merch_voice_btn.height='15';
+        merch_voice_btn.src='assets/images/mic.png';
+    }
+
+
+recognition.onerror = (err)=>{
+    console.log('Recognition Error !!'+err.error);
+    merch_voice_btn.width='15';
+    merch_voice_btn.height='15';
+    merch_voice_btn.src='assets/images/mic.png';
+    recognition.abort();    
+    is_recognizing = false;
+}
+
+
+// TAMIL TO ENGLISH TRANSCRIPT
+async function translateTamil(text) {
+  const res = await fetch(
+    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ta|en`
+  );
+  const data = await res.json();
+  console.log(data.responseData.translatedText);
+  return data.responseData.translatedText;
+}
 
 
 </script>
