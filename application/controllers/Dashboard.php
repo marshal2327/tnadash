@@ -36,6 +36,19 @@ class Dashboard extends CI_Controller{
 
     }
 
+    public function getheatmap(){
+        
+        $seas = json_decode($_GET['seas']);
+        $buy = json_decode($_GET['buy']);
+        $comp = json_decode($_GET['comp']);
+
+        $data = $this->Tna_model->heat_delays($seas, $buy, $comp);
+
+        echo json_encode($data);
+
+
+    }
+
 
 
 
