@@ -100,7 +100,7 @@
     <!-- Footer: collapse toggle -->
     <div class="nav-footer">
       <button class="nav-toggle" id="navToggle" onclick="toggleSidebar()">
-        <div class="nav-icon">◁</div>
+        <div id='nav-toggle-icon' class="nav-icon">◁</div>
         <span class="nav-label">Collapse</span>
       </button>
     </div>
@@ -446,7 +446,7 @@
           </div>
 
           <!-- Chart -->
-          <div class="panel" style="animation:fadeUp .6s .35s ease both">
+          <div  class="panel" style="animation:fadeUp .6s .35s ease both">
             <div class="sec-title">Status by Buyer</div>
             <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;" id="chartLeg"></div>
             <div class="bar-row" id="chartBars"></div>
@@ -461,7 +461,7 @@
         </div>
       </div>
     </main>
-  </div><!-- /main-wrap -->
+  </div><!-- /main-wrap -->   
 </div><!-- /shell -->
 
 <script>

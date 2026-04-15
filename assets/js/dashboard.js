@@ -41,7 +41,7 @@ function getOrders(seas, buy, comp, merch){
   comp = comp;
 
 
-  console.log(orders_json);
+  // console.log(orders_json);
 
   ORDERS = orders_json.filter(ol => 
   (seas.includes('all') || seas.includes(ol.SEASON)) &&
@@ -185,12 +185,14 @@ function renderOrders(list){
       <td><span class="pill pill-${o.STATUS}"><span class="pill-dot pd-${o.STATUS}"></span>${o.STATUS}</span></td>
     </tr>`).join('');
 
-    tbody.addEventListener('click', (e)=>{
-      const row = e.target.closest('tr');
-      if(!row) return;
-      const pono = row.dataset.pono;
-      selOrderFn(pono);
-    })
+
+  let srows = tbody.querySelectorAll('tr');
+
+  srows.forEach(srow => {
+    if(!srow) return;
+    const pono = srow.dataset.pono;
+    srow.onclick = ()=>{selOrderFn(pono)}
+  });
 
 }
 
@@ -247,9 +249,9 @@ async function selOrderFn(id){
   document.getElementById('dpNo').textContent=o.PONO;
   document.getElementById('dpBuyer').textContent=`${o.BUYERNAME} · ${o.QTY.toLocaleString()} pcs`;
   document.getElementById('dpMeta').innerHTML=`
-    <div class="meta-box"><div class="meta-lbl">Ship Date</div><div class="meta-val">${o.SHIPDT}</div></div>
-    <div class="meta-box"><div class="meta-lbl">Merchandiser</div><div class="meta-val">${o.MERCH}</div></div>
-    <div class="meta-box"><div class="meta-lbl">Status</div><div class="meta-val"><span class="pill pill-${o.STATUS}">${o.STATUS}</span></div></div>
+    <div class="meta-box"><div class="meta-lbl">Ship Date</div><div class="meta-val">${o.SHIPDT ? o.SHIPDT : '-'}</div></div>
+    <div class="meta-box"><div class="meta-lbl">Merchandiser</div><div class="meta-val">${o.MERCH ? o.MERCH : '-'}</div></div>
+    <div class="meta-box"><div class="meta-lbl">Status</div><div class="meta-val"><span class="pill pill-${o.STATUS}">${o.STATUS ? o.STATUS:'-'}</span></div></div>
     <div class="meta-box"><div class="meta-lbl">Progress</div><div class="meta-val" style="color:var(--gold)">${Math.round(o.PROGRESS)}%</div></div>`;
   document.getElementById('dpPct').textContent=Math.round(o.PROGRESS)+'%';
   panel.classList.remove('show');
@@ -430,7 +432,7 @@ async function renderHeat(seas, buy, comp){
 
   // const maxD=Math.max(...Object.values(stageD),1);
 
-  console.log(seas, buy, comp);
+  // console.log(seas, buy, comp);
 
   try{
 
@@ -439,13 +441,13 @@ async function renderHeat(seas, buy, comp){
 
     if(res){
 
-      console.log(res);
+      // console.log(res);
       const Hlength = Number(res.length);
-          console.log(Hlength);
+          // console.log(Hlength);
 
       const maxD = Math.max(...res.map(o => Number(o.TTLDEL)),1);
 
-      console.log(maxD);
+      // console.log(maxD);
 
       document.getElementById('heatWrap').innerHTML=Object.entries(res).map(([s,d])=>`
     <div class="hm-row">
