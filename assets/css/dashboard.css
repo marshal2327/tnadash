@@ -28,7 +28,7 @@
     --bg2: #0f1825;
     --bg3: #162030;
     --bg4: #1d2d42;
-    --line: rgb(178 162 162 / 62%);
+    --line: rgba(15, 2, 2, 0.62);
     --line2: rgb(255 241 241);
     --text: #e8edf5;
     --text2: #fefefe;
@@ -156,7 +156,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px 16px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--line);
   min-height: var(--top-h);
   overflow: hidden;
