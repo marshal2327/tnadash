@@ -132,8 +132,9 @@
         <div class="seasonf">
             
           <div id="seasonbtn">
+            <img src="<?php echo base_url()?>assets/images/filter.png" width="10" height="10" alt="">
             <span>Season</span>
-            <img width="10" height="8" src="<?php echo base_url()?>assets/images/down-arrow.png" alt="">
+            <img width="10" height="8" style="filter:var(--invert);" src="<?php echo base_url()?>assets/images/down-arrow.png" alt="">
           </div>
 
             <div id='season-opt' class="season-opt">
@@ -166,8 +167,9 @@
         <div class="buyerf">
 
           <div id="buyerbtn">
+          <img src="<?php echo base_url()?>assets/images/filter.png" width="10" height="10" alt=""> 
             <span>Buyer</span>
-            <img width="10" height="8" src="<?php echo base_url()?>assets/images/down-arrow.png" alt="">
+            <img width="10" height="8" style="filter:var(--invert);" src="<?php echo base_url()?>assets/images/down-arrow.png" alt="">
           </div>
 
           <div id="buyer-opt" class="buyer-opt">
@@ -200,8 +202,9 @@
         <div class="companyf">
 
           <div id="companybtn">
+          <img src="<?php echo base_url()?>assets/images/filter.png" width="10" height="10" alt="">
             <span>Company</span>
-            <img width="10" height="8" src="<?php echo base_url()?>assets/images/down-arrow.png" alt="">
+            <img width="10" height="8" style="filter:var(--invert);" src="<?php echo base_url()?>assets/images/down-arrow.png" alt="">
           </div>
 
           <div id="company-opt" class="company-opt">
@@ -237,10 +240,11 @@
       <div class="top-search">
         <span class="search-icon">⌕</span>
         <input type="text" placeholder="Search orders, buyers…" id="searchInput" oninput="doSearch(this.value)">
+        <button id='globsearch_voice_btn' type="button"><img src="<?php echo base_url()?>assets/images/mic.png" style="animation:all .25s;" width="15" height="15"  alt=""></button>
       </div>
 
       <!-- Bell -->
-      <button class="top-btn" id='bell_btn' onclick="notify('5 orders need attention','#ff4e4e')" title="Alerts">
+      <button class="top-btn" id='bell_btn' onclick="notify('No Notifications','#ff4e4e')" title="Alerts">
         🔔
         <div class="notif-badge"></div>
       </button>

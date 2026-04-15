@@ -26,6 +26,10 @@ let seas=[];
 let buy = [];
 let comp = [];
 
+// global search variable
+let searchInput = document.getElementById('searchInput');
+
+
 // let TNA = ["REQUIRMENT", "PRE COSTING", "TRIMS PURCHASE", "YARN PURCHASE", "DYEING SEND", "DYEING RECIEVED", "PP SAMPLE", "PRINTING SENT", "PRINTING RECIEVED"];
 
 function getOrders(seas, buy, comp, merch){
@@ -278,7 +282,7 @@ async function selOrderFn(id){
         <td style='text-align:center;'>${dt.REVPLANED?dtformat(dt.REVPLANED):'-'}</td>
         <td style='text-align:center;'>${dt.ACTEDDT?dtformat(dt.ACTEDDT):'-'}</td>
         <td style='text-align:center;'>${Math.round(dt.COMPPER)+'%'||'-'}</td>
-        <td style='text-align:center; font-weight:550; color:${dt.DELDAYS !== '0'?'#ff4e4e':'black'}'>${dt.DELDAYS !== '0'?'+'+dt.DELDAYS:'-'}</td>
+        <td style='text-align:center; font-weight:550; color:${dt.DELDAYS !== '0'?'#ff4e4e': 'var(--text2)' }'>${dt.DELDAYS !== '0'?'+'+dt.DELDAYS:'-'}</td>
         <td><span class="pill pill-${dt.STATUS.trim().toLowerCase().replace(' ','')}"><span class='pill-dot pd-${dt.STATUS.trim().toLowerCase().replace(' ','')}'></span>${dt.STATUS||'-'}</span></td>
         </tr>`
       }).join('');
@@ -507,7 +511,7 @@ document.getElementById('analitics_nav').onclick = ()=>{
 // ------------------------------------------
 
 document.getElementById('bell_btn').onclick = ()=>{
-  notify('5 orders need attention','#ff4e4e');
+  notify('No Notifications','#ff4e4e');
   closeDropdown()
 };
 
@@ -699,6 +703,8 @@ seas_apply.onclick = ()=>{
    bvalues = [];
    cvalues = [];
 
+   searchInput.value='';
+
   let seasChecked = document.querySelectorAll('input[name="seasons[]"]:checked');  
   seasChecked.forEach(cb => {
     svalues.push(cb.value);
@@ -726,7 +732,7 @@ seas_searchbox.addEventListener('input',()=>{
 
   clearTimeout(timeout1);
 
-  timeout = setTimeout(() => {
+  timeout1 = setTimeout(() => {
 
     const query = seas_searchbox.value.trim().toLowerCase();
 
@@ -804,6 +810,8 @@ buy_apply.onclick = ()=>{
    svalues = [];
    bvalues = [];
    cvalues = [];
+
+   searchInput.value='';
 
   let seasChecked = document.querySelectorAll('input[name="seasons[]"]:checked');  
   seasChecked.forEach(cb => {
@@ -910,6 +918,8 @@ comp_apply.onclick = ()=>{
  bvalues = [];
  cvalues = [];
 
+ searchInput.value='';
+
 let seasChecked = document.querySelectorAll('input[name="seasons[]"]:checked');  
 seasChecked.forEach(cb => {
   svalues.push(cb.value);
@@ -996,6 +1006,7 @@ merchfinput.oninput = ()=>{
 
 merchfbtn.onclick = ()=>{
 
+  searchInput.value = '';
   if(MERCH.length===0) return;
 
   let merchWrap_itms = merchWrap.querySelectorAll('.merch-item');
@@ -1018,6 +1029,7 @@ merchfbtn.onclick = ()=>{
 merchfreset.onclick = ()=>{
 
   merchfinput.value='';
+  searchInput.value='';
 
   if(MERCH.length === 0) return;
 
@@ -1030,7 +1042,8 @@ merchfreset.onclick = ()=>{
 
 // MERCH VOICE FILTERING
 
-let is_recognizing = false;
+let is_merchrecognizing = false;
+
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
@@ -1040,7 +1053,9 @@ recognition.lang = 'ta-IN';
 recognition.interimResults = false;
 
 merch_voice_btn.onclick = ()=>{
-  // console.log('recognition clicked'); 
+  // console.log('recognit ion clicked'); 
+
+  if(is_globrecognizing)return;
 
 
   if(merchfinput.value){
@@ -1049,67 +1064,92 @@ merch_voice_btn.onclick = ()=>{
     merchfinput.dispatchEvent(new Event('input'));
   }
 
-  if(!is_recognizing && MERCH.length > 0){
+  if(!is_merchrecognizing && MERCH.length > 0){
     recognition.start();
   }else{
     recognition.abort();
   }
 
-}
 
-// RECOGNIZING EVENTS
-recognition .onstart = ()=>{
-  // console.log('recognizing start');
-  merch_voice_btn.querySelector('img').src='assets/images/recording.png';
-  // merch_voice_btn.querySelector('img').width='20';
-  // merch_voice_btn.querySelector('img').height='20';
-  is_recognizing = true;
-}
+  // RECOGNIZING EVENTS
+  recognition.onstart = ()=>{
+    // console.log('recognizing start');
+    merch_voice_btn.querySelector('img').src='assets/images/recording.png';
+    // merch_voice_btn.querySelector('img').width='20';
+    // merch_voice_btn.querySelector('img').height='20';
+    is_merchrecognizing = true;
+  }
 
 
-recognition.onresult = async (res)=>{
+  recognition.onresult = async (res)=>{
 
-  // console.log('Voice Gathering..');
-
-  let final_res = ''; 
-
-  const last = res.resultIndex;
-  if(res.results[last].isFinal){
-
-    final_res = res.results[last][0].transcript;
-    let trans = await translateTamil(final_res);
-    merchfinput.value = trans;
-    // TRIGGER INPUT MANUALLY
-    merchfinput.dispatchEvent(new Event('input')); 
-    
-
-    // SLICING FOUND WORD TO SEARCH 
-    let i=5;
-    while(i >= 1){
-      merchfinput.value = trans.slice(0,i);
-      // console.log(trans.slice(0, i));
+    // console.log('Voice Gathering..');
+  
+    let final_res = ''; 
+  
+    const last = res.resultIndex;
+    if(res.results[last].isFinal){
+  
+      final_res = res.results[last][0].transcript;
+      let trans = await translateTamil(final_res);
+      merchfinput.value = trans;
+      // TRIGGER INPUT MANUALLY
       merchfinput.dispatchEvent(new Event('input')); 
-
-      await delay(100);
-
-      let ispers = checkMerchName();
-      if(ispers.includes('flex')){
-        // console.log(ispers, 'here');
-        merchfbtn.click();
-        break;
-      }
-      i--;
-
+      
+  
+      // SLICING FOUND WORD TO SEARCH 
+      let i=5;
+      while(i >= 1){
+        merchfinput.value = trans.slice(0,i);
+        // console.log(trans.slice(0, i));
+        merchfinput.dispatchEvent(new Event('input')); 
+  
+        await delay(100);
+  
+        let ispers = checkMerchName();
+        if(ispers.includes('flex')){
+          // console.log(ispers, 'here');
+          merchfbtn.click();
+          break;
+        }
+        i--;
+  
+    }
+      
+        // setTimeout(() => {
+        //   merchfbtn.click();
+        // }, 100);
+  
+        // console.log(final_res);   
+    }
+  
   }
-    
-      // setTimeout(() => {
-      //   merchfbtn.click();
-      // }, 100);
 
-      // console.log(final_res);   
-  }
+  recognition.onend = ()=>{
+    console.log('Recognition stopped');
+    recognition.abort();
+    is_merchrecognizing = false;
+    // merch_voice_btn.querySelector('img').width='15';
+    // merch_voice_btn.querySelector('img').height='15';
+    merch_voice_btn.querySelector('img').src='assets/images/mic.png';
+    }
+
+
+  recognition.onerror = (err)=>{
+    console.log('Recognition Error !!'+err.error);
+    // merch_voice_btn.querySelector('img').width='15';
+    // merch_voice_btn.querySelector('img').height='15';
+    merch_voice_btn.querySelector('img').src='assets/images/mic.png';
+    recognition.abort();    
+    is_merchrecognizing = false;
+    }
 
 }
+
+
+
+
+
 
 // FOR WAIT
 function delay(ms){
@@ -1128,28 +1168,115 @@ function checkMerchName(){
       
 }
 
-recognition.onend = ()=>{
-        console.log('Recognition stopped');
-        recognition.abort();
-        is_recognizing = false;
-        // merch_voice_btn.querySelector('img').width='15';
-        // merch_voice_btn.querySelector('img').height='15';
-        merch_voice_btn.querySelector('img').src='assets/images/mic.png';
+
+
+
+
+// VOICE FOR GLOBAL SEARCH
+let globsearch_voice_btn = document.getElementById('globsearch_voice_btn');
+
+let is_globrecognizing = false;
+
+globsearch_voice_btn.onclick = ()=>{
+
+  if(is_merchrecognizing) return;
+
+  if(searchInput.value){
+    searchInput.value='';
+    searchInput.dispatchEvent(new Event('input'));
+  }
+  
+
+  if(!is_globrecognizing && ORDERS.length > 0){
+    recognition.start();
+  }else{
+    recognition.abort();
+  }
+
+
+  recognition.onstart = ()=>{
+    is_globrecognizing = true;
+    globsearch_voice_btn.querySelector('img').src='assets/images/recording.png';
+  }
+
+    recognition.onresult = async (res)=>{
+
+      let last = res.resultIndex;
+      if(res.results[last].isFinal){
+
+        let finalRes = res.results[last][0].transcript;
+        console.log(finalRes);
+        let trans = await translateTamil(finalRes);
+        console.log(trans.trim().replace(/\s+/g,''));
+        
+        let cleaned = trans.trim().replace(/\s+/g,'');
+
+        searchInput.value = cleaned;
+        doSearch(cleaned);
+
+        await delay(100);
+
+        let i = 8;
+        while(i >= 1){
+          searchInput.value = cleaned.slice(0, i);
+          doSearch(cleaned.slice(0,i));
+
+          let isPres = checkGlobSearch();
+          if(!isPres){
+            console.log(searchInput.value);
+            break;
+          }
+          i--;
+        }
+
+    
+      }
+
     }
 
+  recognition.onend = ()=>{
+    console.log('Recognition End');
+    recognition.abort();
+    is_globrecognizing = false;
+    globsearch_voice_btn.querySelector('img').src='assets/images/mic.png';
 
-recognition.onerror = (err)=>{
-    console.log('Recognition Error !!'+err.error);
-    // merch_voice_btn.querySelector('img').width='15';
-    // merch_voice_btn.querySelector('img').height='15';
-    merch_voice_btn.querySelector('img').src='assets/images/mic.png';
-    recognition.abort();    
-    is_recognizing = false;
+  } 
+
+  recognition.onerror = ()=>{
+    console.log('Globalsearch Recognition Error');
+    recognition.abort();
+    is_globrecognizing = false;
+    globsearch_voice_btn.querySelector('img').src='assets/images/mic.png';
+
+  }
+
+}
+
+// HELPER FUNC
+
+
+function checkGlobSearch(){
+  let rows = document.querySelectorAll('.otbl tbody tr');
+
+  let is_empty = false;
+  rows.forEach(row => {
+    let td = row.querySelector('td').textContent;
+    if(td.trim().toLowerCase().replace(/\s+/g,'') === 'noordersfound'){
+      is_empty = true;
+    }else{
+      is_empty = false;
+    }
+  });
+
+  return is_empty;
+  
 }
 
 
+
+
 // TAMIL TO ENGLISH TRANSCRIPT
-async function translateTamil(text) {
+async function  translateTamil(text) {
   const res = await fetch(
     `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ta|en`
   );

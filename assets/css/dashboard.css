@@ -28,8 +28,8 @@
     --bg2: #0f1825;
     --bg3: #162030;
     --bg4: #1d2d42;
-    --line: rgba(15, 2, 2, 0.62);
-    --line2: rgb(255 241 241);
+    --line: #b6a0a08f;
+    --line2: #c0b9b98f;
     --text: #e8edf5;
     --text2: #fefefe;
     --text3: #dce8f7;
@@ -40,6 +40,7 @@
     --card: #0f1825;
     --orb-op: 0.07;
     --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --invert: invert(100%)
 }
 
 /* LIGHT */
@@ -60,6 +61,8 @@
   --card:      #ffffff;
   --orb-op:    0.04;
   --shadow:    0 4px 20px rgba(0,0,0,0.08);
+  --invert:    invert(0%)
+
 }
 
 /* ═══════════════════════════════════════════
@@ -527,7 +530,7 @@ body {
 .top-search {
   display: flex; align-items: center; gap: 8px;
   background: var(--bg3); border: 1px solid var(--line);
-  border-radius: 20px; padding: 6px 14px;
+  border-radius: 20px; padding: 1px 8px;
   transition: all .25s; width: 200px;
 }
 .top-search:focus-within {
@@ -893,7 +896,15 @@ body {
   padding:3px 5px;
   border-radius:50%;
   border:1px solid lightgrey;
-  cursor:pointer  ;
+  cursor:pointer;
+}
+
+#globsearch_voice_btn{
+  padding: 5px 6px;
+  border-radius: 50%;
+  border: 1px solid lightgrey;
+  cursor: pointer;
+  margin-right: -8px;
 }
 
 #merch_voice_btn:active{
@@ -939,11 +950,13 @@ body {
   outline:none;
   transition: all .25s;
   font-size:12px;
+  background: var(--bg3);
 }
 
 #merchfinput[placeholder]{
   font-family:var(--font-b);
   font-size:10px;
+  color: var(--text);
 }
 
 
