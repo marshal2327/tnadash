@@ -475,6 +475,6 @@
   let company = <?php echo json_encode($company)?>;
   let base_url = "<?php echo base_url()?>Dashboard/";
 </script>
-  <script src="<?php echo base_url()?>assets/js/dashboard.js"></script>
+  <script src="<?php echo base_url()?>assets/js/dashboard.js?v=123"></script>
 </body>
 </html>

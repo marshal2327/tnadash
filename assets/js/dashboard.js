@@ -409,7 +409,7 @@ function renderChart(){
 
     const qty=bO.reduce((s,o)=>s+ Number(o.QTY),0);
 
-    const h=Math.round(qty/maxQty*100)+10;
+    const h=Math.round(qty/maxQty*100);
 
     // console.log(h);
     let hasDelay=[...bO.map(o=>o.STATUS)];
