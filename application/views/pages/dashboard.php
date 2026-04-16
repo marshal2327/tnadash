@@ -269,9 +269,9 @@
       <!-- User -->
       <div class="user-wrap">
         <button class="user-btn" id="userBtn" onclick="toggleDropdown()">
-          <div class="user-av">ERP</div>
+          <div class="user-av">ADM</div>
           <div>
-            <div class="user-name">ERP</div>
+            <div class="user-name">ADMIN</div>
             <!-- <div class="user-role">Prod Manager</div> -->
           </div>
           <span class="user-caret">▾</span>
