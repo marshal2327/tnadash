@@ -22,7 +22,8 @@ class Tna_model extends CI_Model{
                                 avg( CASE WHEN compper > 100 then 100 else nvl(compper,0) end)progress,
                                 companyid
                                  from tb_tna_dashboard t1 
-                                group by pono, buyername, season, merch, ordqty, shipdt,companyid")->result_array();   
+                                group by pono, buyername, season, merch, ordqty, shipdt,companyid
+                                order by buyername, season,companyid, pono")->result_array();   
 
         $data['seasons'] = $this->db->query("select distinct season from tb_tna_dashboard order by season")->result_array();
         $data['buyers'] = $this->db->query("select distinct buyername from tb_tna_dashboard order by buyername")->result_array();

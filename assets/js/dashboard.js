@@ -77,7 +77,7 @@ function getOrders(seas, buy, comp, merch){
   renderOrders();
   renderMerch();
   renderChart();
-  renderHeat(seas, buy, comp);
+  // renderHeat(seas, buy, comp);
 
 }
 
@@ -409,13 +409,14 @@ function renderChart(){
 
     const qty=bO.reduce((s,o)=>s+ Number(o.QTY),0);
 
-    const h=Math.round(qty/maxQty*100)+4;
+    const h=Math.round(qty/maxQty*100)+10;
 
     // console.log(h);
     let hasDelay=[...bO.map(o=>o.STATUS)];
 
     return`<div class="bar-col">
-      <div class="bar-body" style="height:0;background:${hasDelay.includes('delayed') ? '#ff4e4e88': hasDelay.includes('ontime') ? '#00c48cbd':'#3b9eff88'}" data-h="${h}px"></div>
+      <div class="bar-body" style="height:0;background:${hasDelay.includes('delayed') ? '#ff4e4e88': hasDelay.includes('ontime') ? '#00c48cbd':'#3b9eff88'}; 
+      color:white; font-family:var(--font-b); font-weight:bold; font-size:10px; text-align:center; letter-spacing:1.5px;" data-h="${h}px">${h}%</div>
       <div class="bar-lbl">${b}</div>
     </div>`;  
   }).join('');  
@@ -427,52 +428,52 @@ function renderChart(){
 }
 
 // /* ── Heatmap ── */
-async function renderHeat(seas, buy, comp){
-  // const stageD={};
+// async function renderHeat(seas, buy, comp){
+//   // const stageD={};
 
-  // ORDERS.filter(o=>o.delayStage).forEach(o=>{
-  //   stageD[o.delayStage]=(stageD[o.delayStage]||0)+o.dd.reduce((s,d)=>s+Number(d.days),0);
-  // });
+//   // ORDERS.filter(o=>o.delayStage).forEach(o=>{
+//   //   stageD[o.delayStage]=(stageD[o.delayStage]||0)+o.dd.reduce((s,d)=>s+Number(d.days),0);
+//   // });
 
-  // const maxD=Math.max(...Object.values(stageD),1);
+//   // const maxD=Math.max(...Object.values(stageD),1);
 
-  // console.log(seas, buy, comp);
+//   // console.log(seas, buy, comp);
 
-  try{
+//   try{
 
-    const resp = await fetch(base_url+`getheatmap?seas=${encodeURIComponent(JSON.stringify(seas))}&buy=${encodeURIComponent(JSON.stringify(buy))}&comp=${encodeURIComponent(JSON.stringify(comp))}`);
-    const res = await resp.json();
+//     const resp = await fetch(base_url+`getheatmap?seas=${encodeURIComponent(JSON.stringify(seas))}&buy=${encodeURIComponent(JSON.stringify(buy))}&comp=${encodeURIComponent(JSON.stringify(comp))}`);
+//     const res = await resp.json();
 
-    if(res){
+//     if(res){
 
-      // console.log(res);
-      const Hlength = Number(res.length);
-          // console.log(Hlength);
+//       // console.log(res);
+//       const Hlength = Number(res.length);
+//           // console.log(Hlength);
 
-      const maxD = Math.max(...res.map(o => Number(o.TTLDEL)),1);
+//       const maxD = Math.max(...res.map(o => Number(o.TTLDEL)),1);
 
-      // console.log(maxD);
+//       // console.log(maxD);
 
-      document.getElementById('heatWrap').innerHTML=Object.entries(res).map(([s,d])=>`
-    <div class="hm-row">
-      <div class="hm-label">${d.PRONAME}</div>
-      <div class="hm-track"><div class="hm-fill" style="width:0;background:rgba(255,78,78,${.3+Number(d.TTLDEL)/maxD*.70})" data-w="${Math.round(Number(d.TTLDEL)/maxD*100)}%"></div></div>
-      <div class="hm-val">+${d.TTLDEL}d</div> 
-    </div>`).join('');
-  setTimeout(()=>{
-    document.querySelectorAll('.hm-fill').forEach(el=>{el.style.width=el.dataset.w;});
-  },700);   
-
-
-
-    } 
+//       document.getElementById('heatWrap').innerHTML=Object.entries(res).map(([s,d])=>`
+//     <div class="hm-row">
+//       <div class="hm-label">${d.PRONAME}</div>
+//       <div class="hm-track"><div class="hm-fill" style="width:0;background:rgba(255,78,78,${.3+Number(d.TTLDEL)/maxD*.70})" data-w="${Math.round(Number(d.TTLDEL)/maxD*100)}%"></div></div>
+//       <div class="hm-val">+${d.TTLDEL}d</div> 
+//     </div>`).join('');
+//   setTimeout(()=>{
+//     document.querySelectorAll('.hm-fill').forEach(el=>{el.style.width=el.dataset.w;});
+//   },700);   
 
 
 
-  }catch(err){
-    console.error('HEAT MAP FETCH ERROR : ', err);
-  }           
-}
+//     } 
+
+
+
+//   }catch(err){
+//     console.error('HEAT MAP FETCH ERROR : ', err);
+//   }           
+// }
 
 /* ── Toast ── */
 function notify(msg,color='#f0a500'){
@@ -634,7 +635,7 @@ initKPIs();
 renderOrders();
 renderMerch();
 renderChart();
-renderHeat(seas, buy, comp);
+// renderHeat(seas, buy, comp);
 
 
 // FILTER SEARCH BOX PROCESS

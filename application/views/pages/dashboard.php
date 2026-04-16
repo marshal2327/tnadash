@@ -457,10 +457,10 @@
           </div>
 
           <!-- Heatmap -->  
-          <div class="panel" style="animation:fadeUp .6s .45s ease both">
+          <!-- <div class="panel" style="animation:fadeUp .6s .45s ease both">
             <div class="sec-title">Delay Stage Heatmap</div>
             <div id="heatWrap"></div>
-          </div>
+          </div> -->
 
         </div>
       </div>

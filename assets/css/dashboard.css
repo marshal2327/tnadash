@@ -1139,11 +1139,11 @@ body {
 .bar-lbl { font-size:9px;color:var(--text3);text-align:center; }
 
 /* Heatmap */
-.hm-row { display:flex;align-items:center;gap:10px;margin-bottom:9px; }
+/* .hm-row { display:flex;align-items:center;gap:10px;margin-bottom:9px; }
 .hm-label { font-size:11px;color:var(--text2);width:76px;flex-shrink:0; }
 .hm-track { flex:1;height:6px;background:rgba(128,128,128,.08);border-radius:3px;overflow:hidden; }
 .hm-fill { height:100%;border-radius:3px;transition:width 1.1s ease; }
-.hm-val { font-size:10px;color:var(--red2);width:36px;text-align:right;font-weight:600; }
+.hm-val { font-size:10px;color:var(--red2);width:36px;text-align:right;font-weight:600; } */
 
 /* ═══════════════════════════════════════════
    NOTIFICATION TOAST
@@ -1208,7 +1208,10 @@ body {
   .right-col{display:flex;flex-direction:column;}
   .kpi-row{grid-template-columns:repeat(2,1fr);}
   .dp-meta{grid-template-columns:repeat(2,1fr);}
-  .top-search{display:none;}
+  .top-search{display:none;}  
+  /* .top-search{width: 120px; overflow-x: hidden;} */
+  .top-btn{display: none;}
+  /* .breadcrumb{display:none;} */
 }
 @media(max-width:600px){
   .kpi-row{grid-template-columns:1fr 1fr;}
