@@ -118,12 +118,17 @@
         <div class="ham-line"></div>
       </button>
 
+      <!-- CR LOGO -->
+      <div class='cr-logo'><img src="<?php echo base_url()?>assets/images/crlogo3.png" width='30' height="25" alt=""></div>
+
+
       <!-- Breadcrumb -->
       <div class="breadcrumb">
         <span>Home</span>
         <span class="breadcrumb-sep">›</span>
         <span class="breadcrumb-cur">TNA Dashboard</span>
       </div>
+
 
 
       <!-- FILTER BOX -->
