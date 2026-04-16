@@ -350,6 +350,8 @@
         <div>
           <!-- Orders Panel -->
           <div class="panel" style="animation:fadeUp .6s .15s ease both">
+
+            
             <div class="sec-title">Order List</div>
             <div class="filter-row">
               <button class="fpill active" id="filt_all" onclick="setFilter('all',this)">All Orders</button>
