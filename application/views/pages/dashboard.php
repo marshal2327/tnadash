@@ -119,7 +119,7 @@
       </button>
 
       <!-- CR LOGO -->
-      <div class='cr-logo'><img src="<?php echo base_url()?>assets/images/crlogo3.png" width='30' height="25" alt=""></div>
+      <div class='cr-logo'><img src="<?php echo base_url()?>assets/images/crlogo3.png" width='30' height="20" alt=""></div>
 
 
       <!-- Breadcrumb -->
