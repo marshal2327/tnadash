@@ -54,7 +54,7 @@ function getOrders(seas, buy, comp, merch){
    (merch.includes('all')|| merch.includes(ol.MERCH))
   )
 
-  const uniqmerch = [...new Set(ORDERS.map(ol => ol.MERCH))]
+  const uniqmerch = [...new Set(ORDERS.map(ol => ol.MERCH))].sort();
 
   // console.log(uniqmerch);
 
@@ -402,7 +402,7 @@ function filterByMerch(name){
 /* ── Chart ── */
 function renderChart(){
   // console.log(ORDERS);
-  const buyers=[...new Set(ORDERS.map(o=>o.BUYERNAME))];
+  const buyers=[...new Set(ORDERS.map(o=>o.BUYERNAME))].sort();
 
   const maxQty=Math.max(...buyers.map(b=>ORDERS.filter(o=>o.BUYERNAME===b).reduce((s,o)=>s+Number(o.QTY),0)),1);
 
@@ -433,8 +433,9 @@ function renderChart(){
     const runperc = Math.round(runcnt/ordcnt*100);
     
     
-    // console.log(b);
-    // console.log(delperc, ontperc, runperc);
+    console.log(b);
+    console.log([delcnt, ordcnt], [ontcnt, ordcnt], [runcnt, ordcnt]);
+    console.log(delperc, ontperc, runperc);
   
     return`<div class="bar-col">
       <div class="bar-body" style="height:0;background:${(ontperc < 50 && delperc > 50) ? '#ff4e4e88': (ontperc > 50 && delperc < 50) ? '#00c48cbd': (runperc > 50) ?  '#3b9eff88' : ''}; 
