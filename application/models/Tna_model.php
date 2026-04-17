@@ -45,7 +45,7 @@ class Tna_model extends CI_Model{
 
     public function get_tna_by_pono($pono){
 
-        $data = $this->db->query("select companyid, buyername, pono, season, ordqty, merch, sno, proname,shipdt, revplaned, acteddt , 
+        $data = $this->db->query("select companyid, buyername, pono, season, ordqty, merch, sno, proname,shipdt,planed, revplaned, acteddt , 
                                   case when compper > 100 then 100 else compper end compper, case when compper > 0 then 1 else 0 end as prostatus,
                                   case 
                                       when sum(case when compper > 0 then 1 else 0 end)

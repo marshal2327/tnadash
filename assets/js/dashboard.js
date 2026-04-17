@@ -193,7 +193,7 @@ function renderOrders(list){
   let srows = tbody.querySelectorAll('tr');
 
   srows.forEach(srow => {
-    if(!srow) return;
+    if(!srow) return; 
     const pono = srow.dataset.pono;
     srow.onclick = ()=>{selOrderFn(pono)}
   });
@@ -206,6 +206,8 @@ function renderOrders(list){
 function setFilter(f,btn){
 
   activeFilter=f;
+  searchInput.value='';
+  searchInput.dispatchEvent(new Event('input'));
   document.querySelectorAll('.fpill').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderOrders();
@@ -227,19 +229,22 @@ document.getElementById('filt_running').onclick = (e)=>{
 
 function doSearch(q){
   q=q.trim().toLowerCase();
-  // console.log(q);
-
+  // console.log(q); 
   if(!q){renderOrders();return;}
   const filtered=ORDERS.filter(o=>
-    o.PONO.toLowerCase().includes(q)||
-    o.BUYERNAME.toLowerCase().includes(q)||
-    o.COMPANYID.toLowerCase().includes(q)||
-    o.MERCH.toLowerCase().includes(q)
+    o.STATUS.toLowerCase().replace('/\s+/g','').includes(activeFilter === 'all' ? '' : activeFilter) &&
+    (o.PONO.toLowerCase().replace('/\s+/g','').includes(q)||
+    o.BUYERNAME.toLowerCase().replace('/\s+/g','').includes(q)||
+    o.COMPANYID.toLowerCase().replace('/\s+/g','').includes(q)||
+    o.MERCH.toLowerCase().replace('/\s+/g','').includes(q))
   );
+
+  // console.log(filtered);
+
   renderOrders(filtered);   
 }
 
-document.getElementById('searchInput').oninput = (e)=>{
+document.getElementById('searchInput').oninput  = (e)=>{
   doSearch(e.target.value);
 };
 
@@ -279,6 +284,7 @@ async function selOrderFn(id){
       proc_tb_body.innerHTML = datas.map((dt, i) => {
         return `<tr style="animation:slideRight .3s ${i*.03}s ease both">
         <td style='text-align:left; '>${dt.PRONAME||'-'}</td>
+        <td style='text-align:left; '>${dt.PLANED?dtformat(dt.PLANED) : '-'}</td>
         <td style='text-align:center;'>${dt.REVPLANED?dtformat(dt.REVPLANED):'-'}</td>
         <td style='text-align:center;'>${dt.ACTEDDT?dtformat(dt.ACTEDDT):'-'}</td>
         <td style='text-align:center;'>${Math.round(dt.COMPPER)+'%'||'-'}</td>
@@ -365,7 +371,8 @@ document.getElementById('close_ordet').onclick = closeDetail;
 function renderMerch(){
   const maxO=Math.max(...MERCH.map(m=>m.orders));
   document.getElementById('merchWrap').innerHTML=MERCH.map((m,i)=>{
-    const delperc = Math.round(m.delayed/m.orders*100);
+    const delperc = Math.round(m.delayed/m.orders*100); 
+
    return `<div class="merch-item" style="animation-delay:${i*.07}s" ">
    <div id='mfil_check' style='color:green; display:none;'>✓</div>
     <div class="m-av" style="background:${m.color}18;color:${m.color};border:1px solid ${m.color}33;">${m.initials}</div>
@@ -397,32 +404,47 @@ function renderChart(){
   // console.log(ORDERS);
   const buyers=[...new Set(ORDERS.map(o=>o.BUYERNAME))];
 
-  const maxQty=Math.max(...buyers.map(b=>ORDERS.filter(o=>o.BUYERNAME===b).reduce((s,o)=>s+Number(o.QTY),0)));
+  const maxQty=Math.max(...buyers.map(b=>ORDERS.filter(o=>o.BUYERNAME===b).reduce((s,o)=>s+Number(o.QTY),0)),1);
 
   document.getElementById('chartLeg').innerHTML=
     [['#00c48c','On Time'],['#3b9eff','Running'],['#ff4e4e','Delayed']].map(([c,l])=>
       `<span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)">
         <span style="width:8px;height:8px;border-radius:2px;background:${c};display:inline-block"></span>${l}
       </span>`).join('');
+
+
   document.getElementById('chartBars').innerHTML=buyers.map(b=>{
     const bO=ORDERS.filter(o=>o.BUYERNAME===b);
 
-    const qty=bO.reduce((s,o)=>s+ Number(o.QTY),0);
+    // const qty=bO.reduce((s,o)=>s + Number(o.QTY),0);
 
-    const h=Math.round(qty/maxQty*100);
+    // const h=Math.round(qty/maxQty*100);
 
-    // console.log(h);
-    let hasDelay=[...bO.map(o=>o.STATUS)];
+    // let hasDelay=[...bO.map(o=>o.STATUS)];
 
+    const delcnt = bO.filter(o => o.STATUS === 'delayed').length;
+    const ontcnt = bO.filter(o => o.STATUS === 'ontime').length;
+    const runcnt = bO.filter(o => o.STATUS === 'running').length;
+    const ordcnt = bO.length;
+
+    
+    const delperc = Math.round(delcnt/ordcnt*100);
+    const ontperc = Math.round(ontcnt/ordcnt*100);
+    const runperc = Math.round(runcnt/ordcnt*100);
+    
+    
+    // console.log(b);
+    // console.log(delperc, ontperc, runperc);
+  
     return`<div class="bar-col">
-      <div class="bar-body" style="height:0;background:${hasDelay.includes('delayed') ? '#ff4e4e88': hasDelay.includes('ontime') ? '#00c48cbd':'#3b9eff88'}; 
-      color:white; font-family:var(--font-b); font-weight:bold; font-size:10px; text-align:center; letter-spacing:1.5px;" data-h="${h}px">${h}%</div>
-      <div class="bar-lbl">${b}</div>
+      <div class="bar-body" style="height:0;background:${(ontperc < 50 && delperc > 50) ? '#ff4e4e88': (ontperc > 50 && delperc < 50) ? '#00c48cbd': (runperc > 50) ?  '#3b9eff88' : ''}; 
+      color:white; font-family:var(--font-b); font-weight:bold; font-size:10px; text-align:center; letter-spacing:1.5px;" data-h="${delperc}px">${delperc}%</div>
+      <div class="bar-lbl">${b}</div> 
     </div>`;  
   }).join('');  
   setTimeout(()=>{
     document.querySelectorAll('.bar-body').forEach((el,i)=>{
-      setTimeout(()=>{el.style.height=el.dataset.h;},i*80);
+      setTimeout(()=>{el.style.height=el.dataset.h;},i* 80);
     });
   },700);
 }
@@ -517,35 +539,35 @@ document.getElementById('bell_btn').onclick = ()=>{
 };
 
 // -------------------------------------
-document.getElementById('prof_opt').onclick = ()=>{
-  notify('Profile page coming soon','#3b9eff');
-  closeDropdown()
+// document.getElementById('prof_opt').onclick = ()=>{
+//   notify('Profile page coming soon','#3b9eff');
+//   closeDropdown()
 
-};
+// };
 
-document.getElementById('setting_opt').onclick = ()=>{
-  notify('Notifications opened','#f0a500');
-  closeDropdown()
+// document.getElementById('setting_opt').onclick = ()=>{
+//   notify('Notifications opened','#f0a500');
+//   closeDropdown()
 
-};
+// };
 
-document.getElementById('notify_opt').onclick = ()=>{
-  notify('Notifications opened','#f0a500');
-  closeDropdown()
+// document.getElementById('notify_opt').onclick = ()=>{
+//   notify('Notifications opened','#f0a500');
+//   closeDropdown()
 
-};
+// };
 
-document.getElementById('help_opt').onclick = ()=>{
-  notify('Help & Support coming soon','#ff4e4e');
-  closeDropdown()
+// document.getElementById('help_opt').onclick = ()=>{
+//   notify('Help & Support coming soon','#ff4e4e');
+//   closeDropdown()
 
-};
+// };
 
-document.getElementById('logout_opt').onclick = ()=>{
-  notify('Logging out…','#ff4e4e');
-  closeDropdown()
+  // document.getElementById('logout_opt').onclick = ()=>{
+  //   notify('Logging out…','#ff4e4e');
+  //   closeDropdown()
 
-};
+  // };
 
 
 
@@ -594,18 +616,18 @@ function toggleTheme(){
 document.getElementById('toggle_theme').onclick = toggleTheme;
 
 /* ── User dropdown ── */
-function toggleDropdown(){
-  const btn=document.getElementById('userBtn');
-  const dd=document.getElementById('userDropdown');
-  btn.classList.toggle('open');
-  dd.classList.toggle('open');
-}
+// function toggleDropdown(){
+//   const btn=document.getElementById('userBtn');
+//   const dd=document.getElementById('userDropdown');
+//   btn.classList.toggle('open');
+//   dd.classList.toggle('open');
+// }
 
-document.getElementById('userBtn').onclick = toggleDropdown;
+// document.getElementById('userBtn').onclick = toggleDropdown;
 
 function closeDropdown(){
   document.getElementById('userBtn').classList.remove('open');
-  document.getElementById('userDropdown').classList.remove('open');
+  // document.getElementById('userDropdown').classList.remove('open');
 }
 document.addEventListener('click',e=>{
   if(!e.target.closest('.user-wrap'))closeDropdown();
@@ -1050,7 +1072,7 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 const recognition = new SpeechRecognition();
 
 recognition.continuous  = false;
-recognition.lang = 'ta-IN';
+recognition.lang = 'ta-US';
 recognition.interimResults = false;
 
 merch_voice_btn.onclick = ()=>{
@@ -1178,6 +1200,19 @@ let globsearch_voice_btn = document.getElementById('globsearch_voice_btn');
 
 let is_globrecognizing = false;
 
+numchars = {
+  one:1,
+  two:2,
+  three:3,
+  four:4,
+  five:5,
+  six:6,
+  seven:7,
+  eight:8,
+  nine:9,
+  ten:10
+}
+
 globsearch_voice_btn.onclick = ()=>{
 
   if(is_merchrecognizing) return;
@@ -1208,16 +1243,16 @@ globsearch_voice_btn.onclick = ()=>{
         let finalRes = res.results[last][0].transcript;
         console.log(finalRes);
         let trans = await translateTamil(finalRes);
-        console.log(trans.trim().replace(/\s+/g,''));
+        console.log(trans.trim());
         
-        let cleaned = trans.trim().replace(/\s+/g,'');
+        let cleaned = trans.trim().toLowerCase().replace(/\s+/g,'');
 
         searchInput.value = cleaned;
         doSearch(cleaned);
 
-        await delay(100);
-
-        let i = 8;
+        await delay(300);
+          
+        let i = cleaned.length;
         while(i >= 1){
           searchInput.value = cleaned.slice(0, i);
           doSearch(cleaned.slice(0,i));

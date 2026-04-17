@@ -268,7 +268,7 @@
 
       <!-- User -->
       <div class="user-wrap">
-        <button class="user-btn" id="userBtn" onclick="toggleDropdown()">
+        <button class="user-btn" id="userBtn" >
           <div class="user-av">ADM</div>
           <div>
             <div class="user-name">ADMIN</div>
@@ -276,7 +276,7 @@
           </div>
           <span class="user-caret">▾</span>
         </button>
-        <div class="user-dropdown" id="userDropdown">
+        <!-- <div class="user-dropdown" id="userDropdown">
           <div class="dd-header">
             <div class="dd-av-lg">MA</div>
             <div>
@@ -304,7 +304,7 @@
               <span class="dd-icon">⎋</span> Sign Out
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </header>
 
@@ -400,6 +400,7 @@
                         <tr>
                           <th>Process Name</th>
                           <th>Plan EDt</th>
+                          <th>Rev Plan Edt</th>
                           <th>Actual EDt</th>
                           <th>Comp Perc</th>
                           <th>Delay Days</th>
@@ -458,7 +459,7 @@
 
           <!-- Chart -->
           <div  class="panel" style="animation:fadeUp .6s .35s ease both">
-            <div class="sec-title">Status by Buyer</div>
+            <div class="sec-title">Delay Status by Buyer</div>
             <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;" id="chartLeg"></div>
             <div class="bar-row" id="chartBars"></div>
           </div>
