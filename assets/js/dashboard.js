@@ -304,7 +304,7 @@ async function selOrderFn(id){
       const status = (s.STATUS || '').trim().toLowerCase().replace(' ', '');    
       // console.log(status);
       // const cls=isDelay?'delay':i<done?'done':'pending';
-      const cls = status === 'delayed' ? 'delay' : status === 'ontime' ? 'done' : 'pending';
+      const cls = (status === 'delayed') ? 'delay' : (status === 'ontime') ? 'done' : 'pending';
       // const icon=isDelay?'!':i<done?'✓':(i+1)+'';  
       const icon = status === 'delayed' ? '!' : status === 'ontime' ? '✓' : (i+1)+'';
       return`<div class="tna-node ${cls}" style="animation-delay :${i*.05}s">

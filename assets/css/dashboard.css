@@ -1084,7 +1084,7 @@ body {
 @keyframes delayPulse{0%,100%{box-shadow:0 0 8px rgba(255,78,78,.3);}50%{box-shadow:0 0 22px rgba(255,78,78,.65);};}
 @keyframes donePulse{0%,100%{box-shadow:0 0 8px #0f8866c4;}50%{box-shadow:0 0 22px #13c693c4;};}
 .tna-node.pending .tna-dot { width: 28px; height: 28px; background:rgba(128,128,128,.06);border-color:rgba(128,128,128,.15);color:var(--text3); }
-.tna-lbl { font-size:8px;text-align:center;margin-top:6px;color:var(--text3);letter-spacing:.5px;line-height:1.3; }
+.tna-lbl { font-size:8px;text-align:center;margin-top:6px;color:var(--text3);letter-spacing:.5px;line-height:1.3; white-space: nowrap; }
 .tna-node.done .tna-lbl { color:var(--teal); }
 .tna-node.delay .tna-lbl { color:var(--red2); }
 
@@ -1309,6 +1309,8 @@ body {
     border-color: var(--gold); width: 150px;
     box-shadow: 0 0 0 3px rgba(240,165,0,0.12);
   }
+  .detail-panel.show{width: 730.05px; overflow-x: scroll; box-sizing: border-box;  }
+
 }
 @media(max-width:500px){
   .kpi-row{grid-template-columns:1fr;}
