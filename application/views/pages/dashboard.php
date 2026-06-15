@@ -23,7 +23,7 @@
 <!-- TOAST -->
 <div id="toast" class="toast">
   <div class="toast-dot" id="toastDot"></div>
-  <span id="toastMsg"></span>
+  <span id="toastMsg">Test</span>
 </div>
 
 <!-- NAV OVERLAY (mobile) -->
