@@ -545,7 +545,7 @@ body {
   font-size: 12px; width: 100%; min-width: 0;
 }
 .top-search input::placeholder { color: var(--text3); }
-.search-icon { color: var(--text3); font-size: 13px; flex-shrink: 0; }
+.search-icon { color: var(--text3); font-size: 14px; flex-shrink: 0; }
 
 /* Notification bell */
 .top-btn {
@@ -1312,13 +1312,43 @@ body {
   .detail-panel.show{width: 730.05px; overflow-x: scroll; box-sizing: border-box;  }
 
 }
-@media(max-width:500px){
-  .kpi-row{grid-template-columns:1fr;}
+@media(max-width:500px){  
+  .kpi-row{grid-template-columns:1fr 1fr;}
   .dash-grid{grid-template-columns:1fr}
   .panel{min-width: 730.05px; overflow-x: scroll;} 
   .top-search{width: 120px;}
   .user-caret{display: none;}
   .detail-panel.show{width: 730.05px; overflow-x: scroll; box-sizing: border-box;  }
+
+  .kpi-label{font-size: 14px;}
+  .kpi-sub{font-size: 12px;}
+  #seasonbtn, #buyerbtn, #companybtn{font-size: 14px;}
+  .season-opt-itm label, .buyer-opt-itm label, .company-opt-itm label{font-size: 13px;}
+  .top-search input{font-size: 14px;}
+  .user-av{font-size: 14px;}
+  .sec-title{font-size: 12px; white-space: nowrap;}
+  .fpill{font-size: 14px;}
+  .otbl th{font-size: 14px; text-align: center;}
+  .otbl td{font-size: 13px; text-align: center;}
+  .obtl th{white-space: nowrap;}  
+  .order-no{white-space: nowrap;}
+  .meta-lbl{font-size: 12px;}
+  .meta-val{font-size: 14px;}
+  .pill{font-size: 14px;}
+  .prog-head{font-size: 12px;}
+  .cr-logo img{width: 35px;height: 25px;}
+  #seas_clear, #buy_clear, #comp_clear, #seas_apply, #buy_apply, #comp_apply{font-size: 13px;}
+  #proc-table tbody tr td{font-size: 13px; text-align: center;}
+  .tna-dot{width: 30px; height: 30px;}
+  .tna-lbl,.tna-node.delay .tna-dot{font-size: 12px;}
+  #proc-table .pill{font-size: 13px;}
+  #merchfinput[placeholder], #searchInput{font-size: 12px;}
+  #merchfbtn, #merchfreset{font-size: 14px; }
+  #globsearch_voice_btn img{width: 20px; height: 20px;}
+  #merch_voice_btn img{width: 20px; height: 20px;}
+  .m-meta,.m-pct{font-size: 12px;}
+  .m-bar-fg{font-size: 12px;}
+  .toast{font-size: 13px;}
 
   /* .del-timeline{
     display: none;
