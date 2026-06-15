@@ -825,8 +825,9 @@ body {
   text-align:center;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
   color:var(--text3);padding:0 10px 12px;font-weight:500;
   border-bottom:1px solid var(--line);
+  white-space: nowrap;
 }
-.otbl td { padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle; }
+.otbl td { text-align: center; padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle; }
 .otbl tbody tr { cursor:pointer;transition:background .18s; }
 .otbl tbody tr:hover td { background:rgba(240,165,0,.04); }
 .otbl tbody tr.sel td { background:rgba(240,165,0,.09); }
@@ -1329,7 +1330,7 @@ body {
   .sec-title{font-size: 12px; white-space: nowrap;}
   .fpill{font-size: 14px;}
   .otbl th{font-size: 14px; text-align: center;}
-  .otbl td{font-size: 13px; text-align: center;}
+  .otbl td{font-size: 13px; text-align: center; white-space: wrap;}
   .obtl th{white-space: nowrap;}  
   .order-no{white-space: nowrap;}
   .meta-lbl{font-size: 12px;}
