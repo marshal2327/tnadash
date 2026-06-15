@@ -317,7 +317,7 @@ async function selOrderFn(id){
   } 
 
 
-  }catch(err){
+  }catch(err){  
     console.error('DELAY DETAILS FETCH ERRO : ',err)
   }
   
