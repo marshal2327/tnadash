@@ -1329,9 +1329,9 @@ body {
   .user-av{font-size: 14px;}
   .sec-title{font-size: 12px; white-space: nowrap;}
   .fpill{font-size: 14px;}
-  .otbl th{font-size: 14px; text-align: center;}
-  .otbl td{font-size: 13px; text-align: center; white-space: wrap;}
-  .obtl th{white-space: nowrap;}  
+  .tbl-wrap .otbl th{font-size: 14px; text-align: center;}
+  .tbl-wrap .otbl td{font-size: 13px; text-align: center; white-space: wrap;}
+  .tbl-wrap .obtl th{white-space: nowrap;}  
   .order-no{white-space: nowrap;}
   .meta-lbl{font-size: 12px;}
   .meta-val{font-size: 14px;}
@@ -1343,6 +1343,7 @@ body {
   .tna-dot{width: 30px; height: 30px;}
   .tna-lbl,.tna-node.delay .tna-dot{font-size: 12px;}
   #proc-table .pill{font-size: 13px;}
+  #proc-table th{white-space: wrap;}
   #merchfinput[placeholder], #searchInput{font-size: 12px;}
   #merchfbtn, #merchfreset{font-size: 14px; }
   #globsearch_voice_btn img{width: 20px; height: 20px;}
