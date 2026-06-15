@@ -6,6 +6,7 @@
 <title>CR GARMENTS | DASHBOARD</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?php echo base_url()?>assets/css/dashboard.css">
+<link rel="icon" href="<?php echo base_url()?>assets/images/crlogo2.ico">
 </head>
 <body>
 
@@ -349,19 +350,19 @@
         <!-- LEFT -->
         <div>
           <!-- Orders Panel -->
-          <div class="panel" style="animation:fadeUp .6s .15s ease both">
-
+          <div id="orders_panel" class="panel" style="animation:fadeUp .6s .15s ease both">
             
-            <div class="sec-title">Order List</div>
+            <div id='orders_sec-title' class="sec-title">Order List</div>
             <div class="filter-row">
               <button class="fpill active" id="filt_all" onclick="setFilter('all',this)">All Orders</button>
               <button class="fpill" id="filt_delayed" onclick="setFilter('delayed',this)">Delayed</button>
               <button class="fpill" id="filt_ontime" onclick="setFilter('ontime',this)">On Time</button>
               <button class="fpill" id="filt_running" onclick="setFilter('running',this)">Running</button>
             </div>
+            
             <div class="tbl-wrap">
               <table class="otbl">
-                <thead>
+                <thead  id='orders_head'>
                   <tr>
                     <th>Order No</th><th>Buyer</th><th>Season</th><th>Company</th><th>Merch</th>
                     <th>Qty</th><th>Ship Date</th><th>Status</th>
@@ -370,6 +371,7 @@
                 <tbody id="tbody"></tbody>
               </table>
             </div>
+
           </div>
 
           <!-- Order Detail -->
@@ -399,11 +401,13 @@
                       <thead>
                         <tr>
                           <th>Process Name</th>
-                          <th>Plan EDt</th>
-                          <th>Rev Plan Edt</th>
+                          <th>Plan EDT</th>
+                          <th>First Planned EDT</th>
+                          <th>Rev Plan EDT</th>
                           <th>Actual EDt</th>
                           <th>Comp Perc</th>
-                          <th>Delay Days</th>
+                          <th>Current Delay Days</th>
+                          <th>First Delay Days</th>
                           <th>Status</th>
                         </tr>
                       </thead>

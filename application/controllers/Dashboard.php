@@ -16,7 +16,7 @@ class Dashboard extends CI_Controller{
         foreach($orders['orders'] as $idx => $order){
             $orders['orders'][$idx]['dd'] = [];
         }
-        // echo '<pre>'; print_r($orders['buyer']);exit;
+        // echo '<pre>'; print_r($orders);exit;
 
         $this->load->view('pages/dashboard', $orders);
 

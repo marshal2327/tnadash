@@ -284,11 +284,13 @@ async function selOrderFn(id){
       proc_tb_body.innerHTML = datas.map((dt, i) => {
         return `<tr style="animation:slideRight .3s ${i*.03}s ease both">
         <td style='text-align:left; '>${dt.PRONAME||'-'}</td>
-        <td style='text-align:left; '>${dt.PLANED?dtformat(dt.PLANED) : '-'}</td>
+        <td style='text-align:center; '>${dt.PLANED?dtformat(dt.PLANED) : '-'}</td>
+        <td style='text-align:center; '>${dt.FIRSTPLANED?dtformat(dt.FIRSTPLANED) : '-'}</td>
         <td style='text-align:center;'>${dt.REVPLANED?dtformat(dt.REVPLANED):'-'}</td>
         <td style='text-align:center;'>${dt.ACTEDDT?dtformat(dt.ACTEDDT):'-'}</td>
         <td style='text-align:center;'>${Math.round(dt.COMPPER)+'%'||'-'}</td>
-        <td style='text-align:center; font-weight:550; color:${dt.DELDAYS !== '0'?'#ff4e4e': 'var(--text2)' }'>${dt.DELDAYS !== '0'?'+'+dt.DELDAYS:'-'}</td>
+        <td style='text-align:center; font-weight:550; color:${dt.CURRDELDAYS !== '0'?'#ff4e4e': 'var(--text2)' }'>${dt.CURRDELDAYS !== '0'?'-'+dt.CURRDELDAYS:'-'}</td>
+        <td style='text-align:center; font-weight:550; color:${dt.FIRSTDELDAYS !== '0'?'#ff4e4e': 'var(--text2)' }'>${dt.FIRSTDELDAYS !== '0'?'-'+dt.FIRSTDELDAYS:'-'}</td>
         <td><span class="pill pill-${dt.STATUS.trim().toLowerCase().replace(' ','')}"><span class='pill-dot pd-${dt.STATUS.trim().toLowerCase().replace(' ','')}'></span>${dt.STATUS||'-'}</span></td>
         </tr>`
       }).join('');
@@ -305,7 +307,7 @@ async function selOrderFn(id){
       const cls = status === 'delayed' ? 'delay' : status === 'ontime' ? 'done' : 'pending';
       // const icon=isDelay?'!':i<done?'✓':(i+1)+'';  
       const icon = status === 'delayed' ? '!' : status === 'ontime' ? '✓' : (i+1)+'';
-      return`<div class="tna-node ${cls}" style="animation-dela :${i*.05}s">
+      return`<div class="tna-node ${cls}" style="animation-delay :${i*.05}s">
         <div class="tna-dot">${icon}</div>
         <div class="tna-lbl">${s.PRONAME}</div>
       </div>`;

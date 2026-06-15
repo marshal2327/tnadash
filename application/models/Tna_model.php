@@ -45,17 +45,39 @@ class Tna_model extends CI_Model{
 
     public function get_tna_by_pono($pono){
 
-        $data = $this->db->query("select companyid, buyername, pono, season, ordqty, merch, sno, proname,shipdt,planed, revplaned, acteddt , 
+        $data = $this->db->query("select companyid, buyername, pono, season, ordqty, merch, sno, proname,shipdt,planed, firstplaned, revplaned, acteddt , 
                                   case when compper > 100 then 100 else compper end compper, case when compper > 0 then 1 else 0 end as prostatus,
                                   case 
                                       when sum(case when compper > 0 then 1 else 0 end)
                                            over (partition by pono) > 0
                                           then 
-                                              case when acteddt > revplaned then 'Delayed'
-                                                   when acteddt <= revplaned then 'On Time' else 'Running'  end
-                                          else 'Starting' end as status, CASE WHEN nvl((acteddt-revplaned),0) < 0 THEN 0 ELSE nvl((acteddt-revplaned),0) end deldays from tb_tna_dashboard
-                                  where pono = '".$pono."'
-                                  order by sno")->result_array();
+                                              case when acteddt > firstplaned then 'Delayed'
+                                                   when acteddt <= firstplaned then 'On Time' else 'Running'  end
+                                          else 'Starting' end as status,
+                                          
+                                          CASE 
+                                          WHEN compper > 0 and compper < 95 THEN 
+                                          
+                                          GREATEST(nvl(trunc(sysdate)-revplaned,0),0) 
+                                          ELSE
+                                          
+                                          GREATEST(nvl(acteddt-revplaned,0),0) 
+                                          
+                                          END currdeldays, 
+                                          
+                                          CASE 
+                                          WHEN compper > 0 and compper < 95 THEN
+                                          
+                                          GREATEST(nvl(trunc(sysdate)-firstplaned,0),0)
+                                          ELSE
+                                          
+                                          GREATEST(nvl(acteddt-firstplaned,0),0)
+                                          
+                                          END firstdeldays 
+                                          
+                                          from tb_tna_dashboard
+                                        where pono = '".$pono."'
+                                        order by sno")->result_array();
 
 
         // echo '<pre>'; print_r($data);exit;
