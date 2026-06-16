@@ -1352,6 +1352,8 @@ body {
   .toast{font-size: 13px;}
   .ship-dt{font-size: 13px;}
   .merch-ch{font-size: 12px;}
+  .bar-lbl{font-size: 12px;}
+  .bar-body{font-size: 12px;}
 
   /* .del-timeline{
     display: none;
