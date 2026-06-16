@@ -23,7 +23,7 @@
 <!-- TOAST -->
 <div id="toast" class="toast">
   <div class="toast-dot" id="toastDot"></div>
-  <span id="toastMsg">Test</span>
+  <span id="toastMsg"></span>
 </div>
 
 <!-- NAV OVERLAY (mobile) -->
@@ -45,7 +45,7 @@
 
     <!-- Main Nav -->
     <div class="nav-section">
-      <div class="nav-section-label">Main</div>
+      <div class="nav-section-label">Main</div>   
       <div class="nav-item active" id='dashboard_nav' onclick="notify('Dashboard','#f0a500')">
         <div class="nav-icon">◈</div>
         <span class="nav-label">Dashboard</span>
