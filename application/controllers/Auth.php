@@ -14,7 +14,7 @@ class Auth extends CI_Controller{
 
         $method = $this->router->fetch_method();
 
-        if($this->session->userdata('is_login')){
+        if($this->session->userdata('is_logged_in') && $method != 'logout'){
             redirect('Dashboard', 'refresh');
         }
 

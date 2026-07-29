@@ -96,3 +96,7 @@ class CI_SessionWrapper implements SessionHandlerInterface, SessionUpdateTimesta
 		return $this->driver->validateId($id);
 	}
 }
+
+
+
+

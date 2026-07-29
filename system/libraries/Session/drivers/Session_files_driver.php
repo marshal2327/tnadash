@@ -447,3 +447,7 @@ class CI_Session_files_driver extends CI_Session_driver implements CI_Session_dr
 			: strlen($str);
 	}
 }
+
+
+
+

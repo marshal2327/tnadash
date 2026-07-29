@@ -423,3 +423,7 @@ class CI_Typography {
 	}
 
 }
+
+
+
+

@@ -216,3 +216,7 @@ class CI_Cache_wincache extends CI_Driver {
 		return (extension_loaded('wincache') && ini_get('wincache.ucenabled'));
 	}
 }
+
+
+
+

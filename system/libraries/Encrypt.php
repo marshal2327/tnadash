@@ -520,3 +520,8 @@ class CI_Encrypt {
 			: substr($str, $start);
 	}
 }
+
+
+
+
+

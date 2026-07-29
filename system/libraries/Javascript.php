@@ -855,3 +855,8 @@ class CI_Javascript {
 	}
 
 }
+
+
+
+
+

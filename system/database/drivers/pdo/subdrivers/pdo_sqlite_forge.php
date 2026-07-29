@@ -237,3 +237,7 @@ class CI_DB_pdo_sqlite_forge extends CI_DB_pdo_forge {
 	}
 
 }
+
+
+
+

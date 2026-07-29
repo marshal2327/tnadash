@@ -229,3 +229,7 @@ class CI_DB_cubrid_forge extends CI_DB_forge {
 	}
 
 }
+
+
+
+

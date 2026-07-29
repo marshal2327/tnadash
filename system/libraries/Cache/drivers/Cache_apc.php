@@ -216,3 +216,7 @@ class CI_Cache_apc extends CI_Driver {
 		return (extension_loaded('apc') && ini_get('apc.enabled'));
 	}
 }
+
+
+
+

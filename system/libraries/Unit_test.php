@@ -405,3 +405,7 @@ function is_false($test)
 {
 	return ($test === FALSE);
 }
+
+
+
+

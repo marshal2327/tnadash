@@ -176,3 +176,7 @@ class CI_DB_cubrid_result extends CI_DB_result {
 	}
 
 }
+
+
+
+

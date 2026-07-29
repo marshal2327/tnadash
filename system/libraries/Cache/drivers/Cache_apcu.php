@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2019 - 2022, CodeIgniter Foundation
+ * Copyright (c) 2014 - 2019, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,82 +30,60 @@
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
  * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (https://bcit.ca/)
- * @copyright	Copyright (c) 2019 - 2022, CodeIgniter Foundation (https://codeigniter.com/)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
- * @since	Version 2.0
+ * @since	Version 3.2.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * CodeIgniter File Caching Class
+ * CodeIgniter APCu Caching Class
  *
  * @package		CodeIgniter
  * @subpackage	Libraries
  * @category	Core
- * @author		EllisLab Dev Team
- * @link
+ * @author		CodeIgniter Dev team
  */
-class CI_Cache_file extends CI_Driver {
+class CI_Cache_apcu extends CI_Driver {
 
 	/**
-	 * Directory in which to save cache files
+	 * Class constructor
 	 *
-	 * @var string
-	 */
-	protected $_cache_path;
-
-	/**
-	 * Initialize file-based cache
+	 * Only present so that an error message is logged
+	 * if APCu is not available.
 	 *
 	 * @return	void
 	 */
 	public function __construct()
 	{
-		$CI =& get_instance();
-		$CI->load->helper('file');
-		$path = $CI->config->item('cache_path');
-		$this->_cache_path = ($path === '') ? APPPATH.'cache/' : $path;
+		if ( ! $this->is_supported())
+		{
+			log_message('error', 'Cache: Failed to initialize APCu; extension not loaded/enabled?');
+		}
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Fetch from cache
+	 * Get
 	 *
-	 * @param	string	$id	Cache ID
-	 * @return	mixed	Data on success, FALSE on failure
+	 * Look for a value in the cache. If it exists, return the data
+	 * if not, return FALSE
+	 *
+	 * @param	string
+	 * @return	mixed	value that is stored/FALSE on failure
 	 */
 	public function get($id)
 	{
-		$data = $this->_get($id);
-		return is_array($data) ? $data['data'] : FALSE;
-	}
+		$success = FALSE;
+		$data = apcu_fetch($id, $success);
 
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Save into cache
-	 *
-	 * @param	string	$id	Cache ID
-	 * @param	mixed	$data	Data to store
-	 * @param	int	$ttl	Time to live in seconds
-	 * @param	bool	$raw	Whether to store the raw value (unused)
-	 * @return	bool	TRUE on success, FALSE on failure
-	 */
-	public function save($id, $data, $ttl = 60, $raw = FALSE)
-	{
-		$contents = array(
-			'time'		=> time(),
-			'ttl'		=> $ttl,
-			'data'		=> $data
-		);
-
-		if (write_file($this->_cache_path.$id, serialize($contents)))
+		if ($success === TRUE)
 		{
-			chmod($this->_cache_path.$id, 0640);
-			return TRUE;
+			return is_array($data)
+				? $data[0]
+				: $data;
 		}
 
 		return FALSE;
@@ -114,14 +92,36 @@ class CI_Cache_file extends CI_Driver {
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Cache Save
+	 *
+	 * @param	string	$id	Cache ID
+	 * @param	mixed	$data	Data to store
+	 * @param	int	$ttl	Length of time (in seconds) to cache the data
+	 * @param	bool	$raw	Whether to store the raw value
+	 * @return	bool	TRUE on success, FALSE on failure
+	 */
+	public function save($id, $data, $ttl = 60, $raw = FALSE)
+	{
+		$ttl = (int) $ttl;
+
+		return apcu_store(
+			$id,
+			($raw === TRUE ? $data : array($data, time(), $ttl)),
+			$ttl
+		);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Delete from Cache
 	 *
-	 * @param	mixed	unique identifier of item in cache
+	 * @param	mixed	unique identifier of the item in the cache
 	 * @return	bool	true on success/false on failure
 	 */
 	public function delete($id)
 	{
-		return is_file($this->_cache_path.$id) ? unlink($this->_cache_path.$id) : FALSE;
+		return apcu_delete($id);
 	}
 
 	// ------------------------------------------------------------------------
@@ -131,25 +131,11 @@ class CI_Cache_file extends CI_Driver {
 	 *
 	 * @param	string	$id	Cache ID
 	 * @param	int	$offset	Step/value to add
-	 * @return	New value on success, FALSE on failure
+	 * @return	mixed	New value on success or FALSE on failure
 	 */
 	public function increment($id, $offset = 1)
 	{
-		$data = $this->_get($id);
-
-		if ($data === FALSE)
-		{
-			$data = array('data' => 0, 'ttl' => 60);
-		}
-		elseif ( ! is_int($data['data']))
-		{
-			return FALSE;
-		}
-
-		$new_value = $data['data'] + $offset;
-		return $this->save($id, $new_value, $data['ttl'])
-			? $new_value
-			: FALSE;
+		return apcu_inc($id, $offset);
 	}
 
 	// ------------------------------------------------------------------------
@@ -159,37 +145,23 @@ class CI_Cache_file extends CI_Driver {
 	 *
 	 * @param	string	$id	Cache ID
 	 * @param	int	$offset	Step/value to reduce by
-	 * @return	New value on success, FALSE on failure
+	 * @return	mixed	New value on success or FALSE on failure
 	 */
 	public function decrement($id, $offset = 1)
 	{
-		$data = $this->_get($id);
-
-		if ($data === FALSE)
-		{
-			$data = array('data' => 0, 'ttl' => 60);
-		}
-		elseif ( ! is_int($data['data']))
-		{
-			return FALSE;
-		}
-
-		$new_value = $data['data'] - $offset;
-		return $this->save($id, $new_value, $data['ttl'])
-			? $new_value
-			: FALSE;
+		return apcu_dec($id, $offset);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Clean the Cache
+	 * Clean the cache
 	 *
 	 * @return	bool	false on failure/true on success
 	 */
 	public function clean()
 	{
-		return delete_files($this->_cache_path, FALSE, TRUE);
+		return apcu_clear_cache();
 	}
 
 	// ------------------------------------------------------------------------
@@ -197,14 +169,11 @@ class CI_Cache_file extends CI_Driver {
 	/**
 	 * Cache Info
 	 *
-	 * Not supported by file-based caching
-	 *
-	 * @param	string	user/filehits
-	 * @return	mixed	FALSE
+	 * @return	mixed	array on success, false on failure
 	 */
-	public function cache_info($type = NULL)
+	public function cache_info()
 	{
-		return get_dir_file_info($this->_cache_path);
+		return apcu_cache_info();
 	}
 
 	// ------------------------------------------------------------------------
@@ -213,79 +182,41 @@ class CI_Cache_file extends CI_Driver {
 	 * Get Cache Metadata
 	 *
 	 * @param	mixed	key to get cache metadata on
-	 * @return	mixed	FALSE on failure, array on success.
+	 * @return	mixed	array on success/false on failure
 	 */
 	public function get_metadata($id)
 	{
-		if ( ! is_file($this->_cache_path.$id))
+		$success = FALSE;
+		$stored = apcu_fetch($id, $success);
+
+		if ($success === FALSE OR count($stored) !== 3)
 		{
 			return FALSE;
 		}
 
-		$data = unserialize(file_get_contents($this->_cache_path.$id));
+		list($data, $time, $ttl) = $stored;
 
-		if (is_array($data))
-		{
-			$mtime = filemtime($this->_cache_path.$id);
-
-			if ( ! isset($data['ttl'], $data['time']))
-			{
-				return FALSE;
-			}
-
-			return array(
-				'expire' => $data['time'] + $data['ttl'],
-				'mtime'	 => $mtime
-			);
-		}
-
-		return FALSE;
+		return array(
+			'expire'  => $time + $ttl,
+			'mtime'   => $time,
+			'data'    => $data
+		);
 	}
 
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Is supported
+	 * is_supported()
 	 *
-	 * In the file driver, check to see that the cache directory is indeed writable
+	 * Check to see if APCu is available on this system, bail if it isn't.
 	 *
 	 * @return	bool
 	 */
 	public function is_supported()
 	{
-		return is_really_writable($this->_cache_path);
+		return (extension_loaded('apcu') && ini_get('apc.enabled'));
 	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Get all data
-	 *
-	 * Internal method to get all the relevant data about a cache item
-	 *
-	 * @param	string	$id	Cache ID
-	 * @return	mixed	Data array on success or FALSE on failure
-	 */
-	protected function _get($id)
-	{
-		if ( ! is_file($this->_cache_path.$id))
-		{
-			return FALSE;
-		}
-
-		$data = unserialize(file_get_contents($this->_cache_path.$id));
-
-		if ($data['ttl'] > 0 && time() > $data['time'] + $data['ttl'])
-		{
-			file_exists($this->_cache_path.$id) && unlink($this->_cache_path.$id);
-			return FALSE;
-		}
-
-		return $data;
-	}
-
 }
-
 
 
 

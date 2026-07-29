@@ -368,3 +368,7 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver {
 	}
 
 }
+
+
+
+

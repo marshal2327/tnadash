@@ -33,13 +33,13 @@
  * @copyright	Copyright (c) 2019 - 2022, CodeIgniter Foundation (https://codeigniter.com/)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
- * @since	Version 3.0.0
+ * @since	Version 1.4.1
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Interbase/Firebird Result Class
+ * oci8 Result Class
  *
  * This class extends the parent result class: CI_DB_result
  *
@@ -47,7 +47,41 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/database/
  */
-class CI_DB_ibase_result extends CI_DB_result {
+class CI_DB_oci8_result extends CI_DB_result {
+
+	/**
+	 * Limit used flag
+	 *
+	 * @var	bool
+	 */
+	public $limit_used;
+
+	/**
+	 * Commit mode flag
+	 *
+	 * @var	int
+	 */
+	public $commit_mode;
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Class constructor
+	 *
+	 * @param	object	&$driver_object
+	 * @return	void
+	 */
+	public function __construct(&$driver_object)
+	{
+		parent::__construct($driver_object);
+
+		$this->result_id = $driver_object->result_id;
+		$this->limit_used = $driver_object->limit_used;
+		$this->commit_mode =& $driver_object->commit_mode;
+		$driver_object->result_id = FALSE;
+	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Number of fields in the result set
@@ -56,7 +90,10 @@ class CI_DB_ibase_result extends CI_DB_result {
 	 */
 	public function num_fields()
 	{
-		return ibase_num_fields($this->result_id);
+		$count = oci_num_fields($this->result_id);
+
+		// if we used a limit we subtract it
+		return ($this->limit_used) ? $count - 1 : $count;
 	}
 
 	// --------------------------------------------------------------------
@@ -71,12 +108,10 @@ class CI_DB_ibase_result extends CI_DB_result {
 	public function list_fields()
 	{
 		$field_names = array();
-		for ($i = 0, $num_fields = $this->num_fields(); $i < $num_fields; $i++)
+		for ($c = 1, $fieldCount = $this->num_fields(); $c <= $fieldCount; $c++)
 		{
-			$info = ibase_field_info($this->result_id, $i);
-			$field_names[] = $info['name'];
+			$field_names[] = oci_field_name($this->result_id, $c);
 		}
-
 		return $field_names;
 	}
 
@@ -92,14 +127,14 @@ class CI_DB_ibase_result extends CI_DB_result {
 	public function field_data()
 	{
 		$retval = array();
-		for ($i = 0, $c = $this->num_fields(); $i < $c; $i++)
+		for ($c = 1, $fieldCount = $this->num_fields(); $c <= $fieldCount; $c++)
 		{
-			$info = ibase_field_info($this->result_id, $i);
+			$F		= new stdClass();
+			$F->name	= oci_field_name($this->result_id, $c);
+			$F->type	= oci_field_type($this->result_id, $c);
+			$F->max_length	= oci_field_size($this->result_id, $c);
 
-			$retval[$i]			= new stdClass();
-			$retval[$i]->name		= $info['name'];
-			$retval[$i]->type		= $info['type'];
-			$retval[$i]->max_length		= $info['length'];
+			$retval[] = $F;
 		}
 
 		return $retval;
@@ -114,7 +149,11 @@ class CI_DB_ibase_result extends CI_DB_result {
 	 */
 	public function free_result()
 	{
-		ibase_free_result($this->result_id);
+		if (is_resource($this->result_id))
+		{
+			oci_free_statement($this->result_id);
+			$this->result_id = FALSE;
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -128,7 +167,7 @@ class CI_DB_ibase_result extends CI_DB_result {
 	 */
 	protected function _fetch_assoc()
 	{
-		return ibase_fetch_assoc($this->result_id, IBASE_FETCH_BLOBS);
+		return oci_fetch_assoc($this->result_id);
 	}
 
 	// --------------------------------------------------------------------
@@ -143,7 +182,7 @@ class CI_DB_ibase_result extends CI_DB_result {
 	 */
 	protected function _fetch_object($class_name = 'stdClass')
 	{
-		$row = ibase_fetch_object($this->result_id, IBASE_FETCH_BLOBS);
+		$row = oci_fetch_object($this->result_id);
 
 		if ($class_name === 'stdClass' OR ! $row)
 		{
@@ -159,6 +198,20 @@ class CI_DB_ibase_result extends CI_DB_result {
 		return $class_name;
 	}
 
+	// --------------------------------------------------------------------
+
+	/**
+	 * Destructor
+	 *
+	 * Attempt to free remaining statement IDs.
+	 *
+	 * @see	https://github.com/bcit-ci/CodeIgniter/pull/5896
+	 * @return	void
+	 */
+	public function __destruct()
+	{
+		$this->free_result();
+	}
 }
 
 

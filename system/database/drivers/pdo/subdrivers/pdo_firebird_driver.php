@@ -278,3 +278,7 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver {
 		return ($this->db_debug) ? $this->display_error('db_unsupported_feature') : FALSE;
 	}
 }
+
+
+
+

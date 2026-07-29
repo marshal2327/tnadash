@@ -60,3 +60,7 @@ class CI_DB_sqlite3_utility extends CI_DB_utility {
 	}
 
 }
+
+
+
+

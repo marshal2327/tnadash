@@ -69,3 +69,7 @@ class CI_DB_pdo_odbc_forge extends CI_DB_pdo_forge {
 	}
 
 }
+
+
+
+

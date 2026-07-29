@@ -352,3 +352,7 @@ class CI_DB_pdo_dblib_driver extends CI_DB_pdo_driver {
 		return $this->data_cache['version'] = $this->conn_id->query("SELECT SERVERPROPERTY('ProductVersion') AS ver")->fetchColumn(0);
 	}
 }
+
+
+
+

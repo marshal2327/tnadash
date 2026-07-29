@@ -412,3 +412,7 @@ class CI_DB_ibase_driver extends CI_DB {
 	}
 
 }
+
+
+
+
